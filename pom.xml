@@ -36,6 +36,18 @@
         </dependency>
         <dependency>
             <scope>compile</scope>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-json</artifactId>
+            <version>2.4.19</version>
+        </dependency>
+        <dependency>
+            <scope>compile</scope>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-xml</artifactId>
+            <version>2.4.19</version>
+        </dependency>
+        <dependency>
+            <scope>compile</scope>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.10</version>
