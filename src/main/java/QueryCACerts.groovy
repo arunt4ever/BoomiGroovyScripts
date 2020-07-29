@@ -48,7 +48,7 @@ void getCertificateList(KeyStore ks) {
     HashMap<String, Certificate> certs = new HashMap<String, Certificate>();
     try {
         Enumeration<String> aliases = ks.aliases();
-        sb.append("Alias, ValidToDate, ValidFlag");
+        sb.append("Alias,ValidToDate,ValidFlag");
         sb.append("\n");
         while (aliases.hasMoreElements()) {
             String alias = aliases.nextElement();
