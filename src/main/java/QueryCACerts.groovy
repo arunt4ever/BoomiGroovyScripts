@@ -1,3 +1,6 @@
+import java.util.Properties;
+import java.io.InputStream;
+
 import com.boomi.execution.ExecutionUtil
 import groovy.transform.Field
 
@@ -17,6 +20,9 @@ StringBuilder sb = new StringBuilder()
 
 @Field
 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM d HH:mm:ss zzz yyyy", Locale.ENGLISH);
+
+@Field
+TreeMap<Long,String> sortedValues = new TreeMap<>();
 
 try {
     char[] passphrase;
@@ -45,15 +51,17 @@ try {
 
 void getCertificateList(KeyStore ks) {
     logger.info("Listing Certificates in the KeyStore....");
-    HashMap<String, Certificate> certs = new HashMap<String, Certificate>();
     try {
         Enumeration<String> aliases = ks.aliases();
-        sb.append("Alias,ValidToDate,ValidFlag");
-        sb.append("\n");
         while (aliases.hasMoreElements()) {
             String alias = aliases.nextElement();
             Certificate cert = ks.getCertificate(alias);
-            sb.append(parseCertificateInfo(alias, cert));
+            parseCertificateInfo(alias, cert);
+        }
+        sb.append("Alias,ValidToDate,ValidFlag");
+        sb.append("\n");
+        for (String value: sortedValues.values()) {
+            sb.append(value);
             sb.append("\n");
         }
     } catch (KeyStoreException e) {
@@ -61,7 +69,7 @@ void getCertificateList(KeyStore ks) {
     }
 }
 
-String parseCertificateInfo(String alias, Certificate cert) {
+void parseCertificateInfo(String alias, Certificate cert) {
     String certString = cert.toString();
 
     int startIndex = certString.indexOf("To:") + 3;
@@ -70,11 +78,11 @@ String parseCertificateInfo(String alias, Certificate cert) {
     boolean validResult = false
     try {
         ZonedDateTime zonedDateTime = ZonedDateTime.parse(validToDate, formatter)
-        validResult = zonedDateTime.isAfter(ZonedDateTime.now());
+        validResult = zonedDateTime.isAfter(ZonedDateTime.now())
+        sortedValues.put(zonedDateTime.toEpochSecond(),alias + "," + validToDate + "," + validResult);
     }catch (DateTimeParseException e){
-        logger.info(e.printStackTrace())
+        e.printStackTrace()
     }
-    return alias + "," + validToDate + "," + validResult;
 }
 
 
